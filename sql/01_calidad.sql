@@ -1,0 +1,22 @@
+-- IDs con movimientos que NO están en PRODUCTOS
+SELECT DISTINCT x.id_producto
+FROM (
+  SELECT TRIM("ID_PRODUCTO") AS id_producto FROM public."ENTRADAS"
+  UNION
+  SELECT TRIM("ID_PRODUCTO") FROM public."SALIDAS"
+) x
+LEFT JOIN public."PRODUCTOS" p
+       ON TRIM(p."ID_PRODUCTO") = x.id_producto
+WHERE p."ID_PRODUCTO" IS NULL
+ORDER BY 1;
+
+-- Duplicados en PRODUCTOS
+SELECT TRIM("ID_PRODUCTO") AS id_norm, COUNT(*) repes
+FROM public."PRODUCTOS"
+GROUP BY TRIM("ID_PRODUCTO")
+HAVING COUNT(*) > 1
+ORDER BY repes DESC;
+
+-- Fechas raras
+SELECT * FROM public."ENTRADAS" WHERE "FECHA" IS NULL OR TRIM("FECHA")='';
+SELECT * FROM public."SALIDAS"  WHERE "FECHA" IS NULL;
